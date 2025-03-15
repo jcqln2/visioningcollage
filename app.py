@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-# Set your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Better practice: use environment variables
+
+openai.api_key = os.getenv("OPENAI_API_KEY")  
 
 @app.route('/')
 def index():
@@ -33,7 +33,7 @@ def generate_image():
 
     try:
         response = openai.images.generate(
-            model="dall-e-3",  # Specify the latest model
+            model="dall-e-3",  
             prompt=prompt,
             n=1,  # Generate one image
             size="1024x1024"
