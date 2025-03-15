@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Generator</title>
+    <script>
+        async function generatePrompt() {
+            const wordsInput = document.getElementById("words").value;
+            const wordsArray = wordsInput.split(',').map(word => word.trim());
+            
+            const response = await fetch("/generate_prompt", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ words: wordsArray })
+            });
+            
+            const result = await response.json();
+            const output = document.getElementById("output");
+            
+            if (response.ok) {
+                output.innerHTML = `<strong>Generated Prompt:</strong> ${result.prompt}`;
+                generateImage(result.prompt);
+            } else {
+                output.innerHTML = `<strong>Error:</strong> ${result.error}`;
+            }
+        }
+
+        async function generateImage(prompt) {
+            const response = await fetch("/generate_image", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+            
+            const result = await response.json();
+            const imageContainer = document.getElementById("imageContainer");
+            
+            if (response.ok) {
+                imageContainer.innerHTML = `<img src="${result.image_url}" alt="Generated Art" style="max-width: 100%; height: auto;">`;
+            } else {
+                imageContainer.innerHTML = `<strong>Error:</strong> ${result.error}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>AI Prompt Generator</h1>
+    <p>Enter up to 20 words, separated by commas, to generate a creative prompt.</p>
+    <input type="text" id="words" placeholder="e.g., sunset, ocean, mountains">
+    <button onclick="generatePrompt()">Generate Prompt</button>
+    <p id="output"></p>
+    <div id="imageContainer"></div>
+</body>
+</html>
